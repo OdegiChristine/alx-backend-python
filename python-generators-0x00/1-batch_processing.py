@@ -24,6 +24,7 @@ def batch_processing(batch_size):
         for user in batch:
             if Decimal(user['age']) > 25:
                 yield user
+    return
 
 # Usage
 if __name__ == '__main__':
