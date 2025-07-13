@@ -1,5 +1,6 @@
 import sqlite3
 
+# Reusable context manager that takes a query as input and executes it, managing both connection and the query execution
 class ExecuteQuery:
     def __init__(self, query, par):
         self.query = query
@@ -20,3 +21,7 @@ class ExecuteQuery:
             self.cursor.close()
         if self.conn:
             self.conn.close()
+
+with ExecuteQuery("SELECT * FROM users WHERE age > ?", (25,)) as cursor:
+    for row in cursor:
+        print(row)
