@@ -69,6 +69,7 @@ class TestGithubOrgClient(unittest.TestCase):
 
             # Check each mock was called exactly once
             mock_url.assert_called_once()
+            mock_get_json.assert_called_once()
             mock_get_json.assert_called_once_with("https://api.github.com/orgs/test_org/repos")
 
     @parameterized.expand([
