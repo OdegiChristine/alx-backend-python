@@ -45,10 +45,10 @@ class TestGetJson(unittest.TestCase):
     """Unit tests for get_json function."""
 
     @parameterized.expand([
-        ("example", "http://example.com", {"payload": True}),
-        ("holberton", "http://holberton.io", {"payload": False}),
+        ("http://example.com", {"payload": True}),
+        ("http://holberton.io", {"payload": False}),
     ])
-    def test_get_json(self, name: str, test_url: str, test_payload: Dict) -> None:
+    def test_get_json(self, test_url: str, test_payload: Dict) -> None:
         """Test get_json fetches and returns the correct JSON data."""
         # Patch replaces requests.get in the utils module with a mock
         with patch("utils.requests.get") as mock_get:
