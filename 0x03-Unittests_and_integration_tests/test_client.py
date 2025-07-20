@@ -21,19 +21,20 @@ class TestGithubOrgClient(unittest.TestCase):
     ])
     @patch("client.get_json")
     def test_org(self, org_name, mock_get_json):
-        """Test that .org() return correct organization data."""
+        """
+        Test that .org() return correct organization data.
+        """
         # Set up the mock return value
-        expected_payload = {"org": org_name}
-        mock_get_json.return_value = expected_payload
+        expected = {"payload": True}
+        mock_get_json.return_value = expected
 
         # Create client and call .org()
         client = GithubOrgClient(org_name)
-        client.__dict__.pop("org", None)
         result = client.org
 
         # Assert get_json called with correct URL
         mock_get_json.assert_called_once_with(f"https://api.github.com/orgs/{org_name}")
-        self.assertEqual(result, expected_payload)
+        self.assertEqual(result, expected)
 
     @patch.object(GithubOrgClient, "org", new_callable=PropertyMock)
     def test_public_repos_url(self, mock_org):
