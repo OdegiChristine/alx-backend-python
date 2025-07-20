@@ -52,11 +52,12 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_public_repos(self, mock_get_json):
         """Test that public_repos returns a list of repo names."""
         # Define a fake payload that get_json will return
-        mock_get_json.return_value = [
+        payload = [
             {"name": "repo1"},
             {"name": "repo2"},
             {"name": "repo3"},
         ]
+        mock_get_json.return_value = payload
 
         # Mock the _public_repos_url property using patch as a context manager
         with patch("client.GithubOrgClient._public_repos_url", new_callable=PropertyMock) as mock_url:
@@ -69,7 +70,6 @@ class TestGithubOrgClient(unittest.TestCase):
 
             # Check each mock was called exactly once
             mock_url.assert_called_once()
-            mock_get_json.assert_called_once()
             mock_get_json.assert_called_once_with("https://api.github.com/orgs/test_org/repos")
 
     @parameterized.expand([
