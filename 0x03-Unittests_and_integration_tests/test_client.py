@@ -9,6 +9,7 @@ from unittest.mock import patch, PropertyMock, Mock
 from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
 from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
+from typing import Dict
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -27,6 +28,7 @@ class TestGithubOrgClient(unittest.TestCase):
 
         # Create client and call .org()
         client = GithubOrgClient(org_name)
+        client.__dict__.pop("org", None)
         result = client.org
 
         # Assert get_json called with correct URL
@@ -49,21 +51,20 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_public_repos(self, mock_get_json):
         """Test that public_repos returns a list of repo names."""
         # Define a fake payload that get_json will return
-        mock_repos_payload = [
+        mock_get_json.return_value = [
             {"name": "repo1"},
             {"name": "repo2"},
             {"name": "repo3"},
         ]
-        mock_get_json.return_value = mock_repos_payload
 
         # Mock the _public_repos_url property using patch as a context manager
-        with patch.object(GithubOrgClient, "_public_repos_url", new_callable=PropertyMock) as mock_url:
+        with patch("client.GithubOrgClient._public_repos_url", new_callable=PropertyMock) as mock_url:
             mock_url.return_value = "https://api.github.com/orgs/test_org/repos"
             client = GithubOrgClient("test_org")
-            repos = client.public_repos()
+            result = client.public_repos()
 
             # Assert the result is a list of repo names
-            self.assertEqual(repos, ["repo1", "repo2", "repo3"])
+            self.assertEqual(result, ["repo1", "repo2", "repo3"])
 
             # Check each mock was called exactly once
             mock_url.assert_called_once()
@@ -73,8 +74,8 @@ class TestGithubOrgClient(unittest.TestCase):
         ({"license": {"key": "my_license"}}, "my_license", True),
         ({"license": {"key": "other_license"}}, "my_license", False),
     ])
-    def test_has_license(self, repo, license_key, expected):
-        """Test that has_license correctly filters license key."""
+    def test_has_license(self, repo: Dict[str, Dict[str, str]], license_key: str, expected: bool) -> None:
+        """Test that has_license returns correct boolean for license match."""
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected)
 

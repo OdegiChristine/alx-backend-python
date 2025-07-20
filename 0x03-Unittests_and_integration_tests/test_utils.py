@@ -19,13 +19,15 @@ from typing import Mapping, Sequence, Any, Dict
 class TestAccessNestedMap(unittest.TestCase):
     """Unit tests for access_nested_map function."""
 
-    # Lets me run the same test method with different inputs, without the need to repeat code for many input variations.
+    # Lets me run the same test method with different inputs,
+    # without the need to repeat code for many input variations.
     @parameterized.expand([
         ({"a": 1}, ("a",), 1),
         ({"a": {"b": 2}}, ("a",), {"b": 2}),
         ({"a": {"b": 2}}, ("a", "b"), 2),
     ])
     def test_access_nested_map(self, nested_map: Mapping, path: Sequence, expected: Any) -> None:
+        """Test correct values returned from nested maps."""
         self.assertEqual(access_nested_map(nested_map, path), expected)
 
     @parameterized.expand([
@@ -46,7 +48,7 @@ class TestGetJson(unittest.TestCase):
         ("example", "http://example.com", {"payload": True}),
         ("holberton", "http://holberton.io", {"payload": False}),
     ])
-    def test_get_json(self, name:str, test_url:str, test_payload: Dict) -> None:
+    def test_get_json(self, name: str, test_url: str, test_payload: Dict) -> None:
         """Test get_json fetches and returns the correct JSON data."""
         # Patch replaces requests.get in the utils module with a mock
         with patch("utils.requests.get") as mock_get:
@@ -58,7 +60,7 @@ class TestGetJson(unittest.TestCase):
             result = get_json(test_url)
 
             # Assert requests.get was called once with test_url
-            mock_get.assert_called_with(test_url)
+            mock_get.assert_called_once_with(test_url)
 
             # Assert the result matches the expected payload
             self.assertEqual(result, test_payload)
