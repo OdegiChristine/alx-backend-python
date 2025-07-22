@@ -1,0 +1,9 @@
+./.idea
+venv/
+venv*/
+.idea/
+.pytest_cache/
+.env/
+*.sqlite3
+db.sqlite3
+
