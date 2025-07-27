@@ -1,5 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 from .models import Conversation, Message
+from rest_framework import permissions
 
 class IsParticipantOfConversation(BasePermission):
     """
@@ -9,11 +10,14 @@ class IsParticipantOfConversation(BasePermission):
 
     def has_permission(self, request, view):
         # Check global access for authenticated users only
-        return request.user and request.user.is_authenticated
+        if request.method in ["PUT", "PATCH", "DELETE"]:
+            return request.user and request.user.is_authenticated
+        return True
 
     def has_object_perrmission(self, request, view, obj):
-        if isinstance(obj, Conversation):
-            return request.user in obj.participants.all()
-        if isinstance(obj, Message):
-            return request.user in obj.conversation.participants.all()
+        if request.user and request.user.is_authenticated:
+            if isinstance(obj, Conversation):
+                return request.user in obj.participants.all()
+            if isinstance(obj, Message):
+                return request.user in obj.conversation.participants.all()
         return False

@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.status import HTTP_403_FORBIDDEN
+from rest_framework.response import Response
 
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
@@ -20,7 +22,7 @@ User = get_user_model()
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
-    permission_classes = [IsParticipantOfConversation]
+    permission_classes = [IsParticipantOfConversation, IsAuthenticated]
 
     def get_queryset(self):
         # Only show conversations where the current user is a participant
@@ -43,7 +45,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
-    permission_classes = [IsParticipantOfConversation]
+    permission_classes = [IsParticipantOfConversation, IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = MessageFilter
     pagination_class = MessagePagination
@@ -55,9 +57,9 @@ class MessageViewSet(viewsets.ModelViewSet):
         conversation = get_object_or_404(Conversation, pk=conversation_id)
 
         if self.request.user not in conversation.participants.all():
-            raise PermissionDenied("You are not a participant in this conversation.")
+            return Message.objects.none()
 
-        return conversation.messages.all()
+        return Message.objects.filter(conversation=conversation)
 
     def perform_create(self, serializer):
         conversation_id = self.kwargs.get("conversation_pk")
