@@ -15,7 +15,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        field = ['message_id', 'sender', 'message_body', 'sent_at']
+        fields = ['message_id', 'sender', 'message_body', 'sent_at']
         read_only_fields = ['message_id', 'sent_at']
 
     def get_sender_name(self, obj):

@@ -8,6 +8,10 @@ from rest_framework.exceptions import PermissionDenied
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 from django.contrib.auth import get_user_model
+from django_filters.rest_framework import DjangoFilterBackend
+from .permissions import IsParticipantOfConversation
+from .filters import MessageFilter
+from .pagination import MessagePagination
 
 User = get_user_model()
 
@@ -16,9 +20,9 @@ User = get_user_model()
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsParticipantOfConversation]
 
-    def get_querset(self):
+    def get_queryset(self):
         # Only show conversations where the current user is a participant
         return self.queryset.filter(participants=self.request.user)
 
@@ -39,8 +43,10 @@ class ConversationViewSet(viewsets.ModelViewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
-    permission_classes = [IsAuthenticated]
-    filter_backends = [filters.OrderingFilter]
+    permission_classes = [IsParticipantOfConversation]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = MessageFilter
+    pagination_class = MessagePagination
     ordering_fields = ['sent_at']
     ordering = ['-sent_at']
 
@@ -49,7 +55,7 @@ class MessageViewSet(viewsets.ModelViewSet):
         conversation = get_object_or_404(Conversation, pk=conversation_id)
 
         if self.request.user not in conversation.participants.all():
-            return Message.objects.none()
+            raise PermissionDenied("You are not a participant in this conversation.")
 
         return conversation.messages.all()
 

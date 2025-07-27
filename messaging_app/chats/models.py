@@ -15,7 +15,7 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
 
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=128)
+    #password = models.CharField(max_length=128)
     REQUIRED_FIELDS = ['email', 'last_name', 'first_name']
 
 
