@@ -1,0 +1,11 @@
+2025-07-27 19:47:45.702818 - User: Admin - Path: /api/
+2025-07-27 19:48:06.349516 - User: Admin - Path: /admin/
+2025-07-27 19:48:40.928226 - User: Admin - Path: /api/
+2025-07-27 19:48:45.875891 - User: Admin - Path: /api/messages/
+2025-07-27 19:49:09.229031 - User: Admin - Path: /api/
+2025-07-27 19:49:12.358278 - User: Admin - Path: /api-auth/
+2025-07-27 19:49:32.746798 - User: Admin - Path: /api-auth/login/
+2025-07-27 19:49:46.718245 - User: Admin - Path: /api-auth/login/
+2025-07-27 19:50:01.052579 - User: Admin - Path: /api/
+2025-07-27 19:50:05.930294 - User: Admin - Path: /api/token/
+2025-07-27 19:50:23.167168 - User: Admin - Path: /api/token/refresh/
