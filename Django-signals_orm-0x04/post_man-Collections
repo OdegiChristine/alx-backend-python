@@ -40,7 +40,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"refresh\": \"secret_key\"\r\n}",
+					"raw": "{\r\n    \"refresh\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MzcwNjAyOSwiaWF0IjoxNzUzNjE5NjI5LCJqdGkiOiI3MzI2MDZjYzEwNTQ0NmFiOTNjNzYyOGE3Mjk1YzA5YyIsInVzZXJfaWQiOiJjMTRmNzQ4Ni04YmI5LTRiMjAtYjllMy0wZDQ4ZGM3YWRlMmYiLCJ1c2VybmFtZSI6IkFkbWluIn0.Y87KhG0Bddme2AoZO9Tk0PrU3ZrW0g7zEna82WHATnE\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
