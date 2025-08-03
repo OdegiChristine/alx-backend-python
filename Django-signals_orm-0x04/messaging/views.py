@@ -4,6 +4,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from .models import Message
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.db.models import Prefetch
 from .serializers import RecursiveMessageSerializer, MessageSerializer
 
 @api_view(['DELETE'])
@@ -19,9 +22,9 @@ class ThreadedMessagesView(APIView):
 
     def get(self, request):
         messages = Message.objects.filter(
-            receiver=request.user,
+            sender=request.user,
             parent_message__isnull=True
-        ).prefetch_related('replies', 'sender', 'receiver')
+        ).select_related('sender', 'receiver').prefetch_related(Prefetch('replies', queryset=Message.objects.select_related('sender', 'receiver')))
         serializer = RecursiveMessageSerializer(messages, many=True)
         return Response(serializer.data)
 
@@ -30,6 +33,15 @@ class UnreadMessagesView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        unread_messages = Message.unread.for_user(request.user)
+        unread_messages = Message.unread.unread_for_user(request.user).only('id', 'sender', 'content', 'timestamp', 'read').select_related('sender')
         serializer = MessageSerializer(unread_messages, many=True)
+        return Response(serializer.data)
+
+@method_decorator(cache_page(60), name='dispatch')
+class ConversationMessagesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        messages = Message.objects.filter(receiver=request.user).order_by('timestamp')
+        serializer = MessageSerializer(messages, many=True)
         return Response(serializer.data)

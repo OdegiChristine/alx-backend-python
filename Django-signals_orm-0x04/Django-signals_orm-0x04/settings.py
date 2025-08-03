@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'chats',
     'django_filters',
+    'messaging.apps.MessagingConfig',
 ]
 
 REST_FRAMEWORK = {

@@ -10,8 +10,10 @@ class Message(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     edited = models.BooleanField(default=False)
+    edited_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='edited_messages')
     read = models.BooleanField(default=False)
     unread = UnreadMessagesManager()
+    objects = models.Manager()
 
     parent_message = models.ForeignKey(
         'self',

@@ -7,6 +7,14 @@ User = get_user_model()
 
 @receiver(post_delete, sender=User)
 def delete_related_user_data(sender, instance, **kwargs):
+    # Delete messages sent or received by the user
+    Message.objects.filter(sender=instance).delete()
+    Message.objects.filter(receiver=instance).delete()
+
+    # Delete notifications for the user
+    Notification.objects.filter(user=instance).delete()
+
+    # Delete all message histories linked to messages the user sent
     MessageHistory.objects.filter(original_message__sender=instance).delete()
     MessageHistory.objects.filter(original_message__receiver=instance).delete()
 
