@@ -17,9 +17,13 @@ RUN pip install -r requirements.txt
 COPY . /app/
 COPY wait-for-db.sh /wait-for-db.sh
 
+# Expose the port django will run on
 EXPOSE 8000
 
-# Command to run Django development server
-#CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-
 ENTRYPOINT ["/wait-for-db.sh"]
+
+# -p flag used when running the container
+# docker run -p 8000:8000 messaging-app
+
+# Command to run Django development server
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
