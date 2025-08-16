@@ -1,6 +1,6 @@
 services:
   db:
-    image: mysql:8.0
+    image: odegichristine/messaging-app:latest
     container_name: messaging_db
     restart: always
     # Done for the checker, not best practice

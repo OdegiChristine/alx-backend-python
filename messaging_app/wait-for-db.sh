@@ -6,7 +6,7 @@ set -e
 echo "Waiting for MySQL..."
 
 # Try connecting until success
-until nc -z db 3306; do
+while ! python -c "import socket; s=socket.socket(); s.connect(('db', 3306))" 2>/dev/null; do
   sleep 1
 done
 
