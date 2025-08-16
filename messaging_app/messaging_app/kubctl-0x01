@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to scale Django app in Kubernetes, test load, and monitor resources
+# Script to scale Django app in Kubernetes, test load, monitor resources
 
 DEPLOYMENT_NAME="django-messaging-deployment"
 SERVICE_NAME="django-messaging-service"
