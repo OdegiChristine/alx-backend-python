@@ -6,4 +6,5 @@ venv*/
 .env/
 *.sqlite3
 db.sqlite3
-
+messaging_app/.env
+h syntax error near unexpected token `newline'
