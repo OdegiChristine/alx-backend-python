@@ -19,21 +19,18 @@ pipeline {
 
         stage('Setup Python') {
             steps {
-                // ShiningPanda provides virtualenv
-                withPythonEnv('Python 3') {
-                    sh '''
-                        python3 -m venv venv
-                        source venv/bin/activate
-                        pip install --upgrade pip
-                        pip install -r requirements.txt
-                    '''
-                }
+               sh '''
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    pip install --upgrade pip
+                    pip3 install -r messaging_app/requirements.txt
+                '''
             }
         }
 
         stage('Install dependencies & Test') {
             steps {
-                sh 'pip install -r requirements.txt'
+                sh 'pip3 install -r messaging_app/requirements.txt'
                 sh 'pytest --junitxml=report.xml'
             }
             post {
@@ -58,15 +55,6 @@ pipeline {
                     sh "echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKER_HUB_CREDENTIALS_USR --password-stdin"
                     sh "docker push $DOCKER_IMAGE:${env.BUILD_NUMBER}"
                 }
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                sh '''
-                    source venv/bin/activate
-                    pytest --junitxml=test-results.xml
-                '''
             }
         }
 
