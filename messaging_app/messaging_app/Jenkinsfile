@@ -1,0 +1,83 @@
+pipeline {
+    agent any
+
+    environment {
+        PYTHON = 'python3'
+        GITHUB_CREDENTIALS = credentials('github-creds')
+        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
+        DOCKER_IMAGE = "odegichristine/messaging-app"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/OdegiChristine/alx-backend-python.git',
+                    credentialsId: 'github-creds'
+            }
+        }
+
+        stage('Setup Python') {
+            steps {
+                // ShiningPanda provides virtualenv
+                withPythonEnv('Python 3') {
+                    sh '''
+                        python3 -m venv venv
+                        source venv/bin/activate
+                        pip install --upgrade pip
+                        pip install -r requirements.txt
+                    '''
+                }
+            }
+        }
+
+        stage('Install dependencies & Test') {
+            steps {
+                sh 'pip install -r requirements.txt'
+                sh 'pytest --junitxml=report.xml'
+            }
+            post {
+                always {
+                    junit 'report.xml'
+                }
+            }
+        }
+
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh "docker build -t $DOCKER_IMAGE:${env.BUILD_NUMBER} ."
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    sh "echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKER_HUB_CREDENTIALS_USR --password-stdin"
+                    sh "docker push $DOCKER_IMAGE:${env.BUILD_NUMBER}"
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh '''
+                    source venv/bin/activate
+                    pytest --junitxml=test-results.xml
+                '''
+            }
+        }
+
+        stage('Publish Report') {
+            steps {
+                junit 'test-results.xml'
+            }
+        }
+    }
+
+    triggers {
+        // Pipeline will only run when triggered manually
+    }
+}
